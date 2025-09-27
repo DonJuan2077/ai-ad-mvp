@@ -1,10 +1,41 @@
+"use client";
+import { useState } from "react";
+
 export default function Home() {
+  const [question, setQuestion] = useState("");
+  const [answer, setAnswer] = useState("");
+
+  async function handleAsk() {
+    setAnswer("正在生成中...");
+    const res = await fetch("/api/summary", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ question }),
+    });
+    const data = await res.json();
+    setAnswer(data.answer);
+  }
+
   return (
-    <main style={{ padding: 24, fontFamily: 'system-ui, sans-serif' }}>
+    <main style={{ padding: 24 }}>
       <h1>AI 总结 + 赞助实验 MVP</h1>
-      <p>✅ Day 1 成功搭建！</p>
-      <p>明天我们会接入 AI，让这里能生成总结，并在回答里插入“赞助推荐”。</p>
+
+      <input
+        type="text"
+        value={question}
+        onChange={(e) => setQuestion(e.target.value)}
+        placeholder="请输入你的问题"
+        style={{ padding: 8, width: "60%", marginRight: 8 }}
+      />
+      <button onClick={handleAsk} style={{ padding: 8 }}>
+        提问
+      </button>
+
+      <div style={{ marginTop: 24, whiteSpace: "pre-wrap" }}>
+        {answer}
+      </div>
     </main>
   );
 }
+
 
